@@ -1,0 +1,81 @@
+<!doctype html>
+<title>Countdown</title>
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        background: linear-gradient(to bottom, #123, #234);
+        color: #fff;
+        font: 18px Cousine, Menlo, Monaco, monospace;
+    }
+    #timer {
+        position: fixed;
+        top: 0; right: 0; bottom: 0; left: 0;
+        text-align: center;
+        line-height: 90vh;
+        font-size: 240px;
+    }
+    #control {
+        position: fixed;
+        top: 30px; left: 30px;
+        background: #353433;
+        border: 2px solid #656463;
+        opacity: 1;
+        transition: 0.1s opacity;
+    }
+    #control button {
+        background: #000;
+        border: 1px solid #555453;
+        padding: 4px;
+        margin: 2px;
+        color: #4f4;
+        font-family: inherit;
+        font-size: 20px;
+    }
+    .controls-hidden #timer {
+        cursor: none;
+    }
+    .controls-hidden #control {
+        opacity: 0;
+        pointer-events: none;
+    }
+</style>
+<body>
+    <div id="timer" onclick="toggleControls()"></div>
+    <div id="control">
+        <button onclick="setTimer()">Set timer</button>
+        <button onclick="resetTimer()">Reset</button>
+        <button onclick="toggleControls()">Hide</button>
+    </div>
+    <script>
+    var endTime = (+localStorage.endTime || 0)
+    function setTimer() {
+        var duration = +prompt('How long to set the timer (minutes)', '15')
+        endTime = localStorage.endTime = duration * 60e3 + Date.now()
+        update()
+    }
+    function resetTimer() {
+        endTime = 0
+    }
+    function toggleControls() {
+        document.body.classList.toggle('controls-hidden')
+    }
+    function update() {
+        var timeLeft = endTime - Date.now()
+        if (timeLeft < 0) {
+            setText('--:--')
+        } else {
+            var minutes = Math.floor(timeLeft / 60e3)
+            var seconds = Math.floor(timeLeft / 1e3) % 60
+            setText(`${minutes}:${seconds.toString(10).padStart(2, '0')}`)
+        }
+    }
+    function setText(text) {
+        document.getElementById('timer').textContent = text
+    }
+    setInterval(update, 200)
+    </script>
+</body>
